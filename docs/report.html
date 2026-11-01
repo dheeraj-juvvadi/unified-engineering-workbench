@@ -175,7 +175,7 @@ src/app/main.cpp = Launch.exe: picks the port, ShellExecuteW opens the browser,
 <tr><td>After one update w, b, v, c</td><td class="n">0.62094645, 0.12094645, 1.07106820, 0.15378828</td></tr>
 <tr><td>J after one update</td><td class="n">0.68577377</td></tr>
 </table>
-<p>The gradients are checked against central finite differences with &epsilon; = 1e-6; the largest difference is 1.1e-10, which is the expected size for this &epsilon; (truncation of order &epsilon;&sup2; plus round-off of order 1e-16/&epsilon;). The loss decreases monotonically over 100 further updates (to about 1e-20), and the Backprop tab reproduces these numbers. The derivation was also worked by hand: <code>docs/appendix_handwritten.pdf</code> (appendix, not counted in the page limit).</p>
+<p>The gradients are checked against central finite differences with &epsilon; = 1e-6; the largest difference is 1.1e-10, which is the expected size for this &epsilon; (truncation of order &epsilon;&sup2; plus round-off of order 1e-16/&epsilon;). The loss decreases monotonically over 100 further updates (to about 1e-20), and the Backprop tab reproduces these numbers. The handwritten appendix is not included; a typed step-by-step derivation is in <code>docs/handwritten_backprop_guide.md</code>.</p>
 </div>
 <figure><img src="../results/backprop_loss.svg" alt="Training loss against gradient-descent step"><figcaption>Fig. 5. Loss J against step (results/backprop.csv).</figcaption></figure>
 </div>

@@ -1,7 +1,8 @@
-# Task F: Hand-written backpropagation guide (copy-by-hand sheet)
+# Task F: Backpropagation worked derivation (typed)
 
-> **Write this out by hand in your own words; scan both pages as `docs/appendix_handwritten.pdf`.**
-> Everything below was re-computed with Python (8 decimals). Keep 8 decimals when you copy, or at least 6.
+> The handwritten scan requested by the brief is **not included** in this submission; this typed
+> derivation shows the same steps (forward pass, chain rule, one update).
+> Everything below was re-computed with Python (8 decimals).
 > The Workbench "Backprop" tab (`src/core/backprop.*`) should print the same numbers; use it as your final check.
 
 **Problem.** One neuron followed by a linear output, one training example.
@@ -109,7 +110,7 @@ The gradient is a statement about the loss surface **at one point** (w, b, v, c)
 
 ---
 
-### Quick self-check list (before you scan)
+### Quick self-check list
 
 - [ ] z = 0.5, h = 0.46211716, ŷ = 0.46211716, e = −1.53788284, J = 1.18254182
 - [ ] 1−h² = 0.78644773; dJ/dw = dJ/db = −1.20946448; dJ/dv = −0.71068205; dJ/dc = −1.53788284

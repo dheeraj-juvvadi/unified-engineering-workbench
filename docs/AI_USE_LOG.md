@@ -14,9 +14,9 @@ build sessions and test runs.
 | Claude Code subagent | Claude Sonnet | README and report drafting from verified results |
 | Claude Code (local session on the candidate's Mac) | Claude Opus 5.5 | Initial reading of the brief and work plan; final independent review of the delivered ZIP (clean rebuild, tests, git history, leak scan) and the parser fix in item 9 below |
 
-No AI tool was used to fill in the handwritten appendix: that is written by hand by the
-candidate (`docs/appendix_handwritten.pdf`). The guide in `docs/handwritten_backprop_guide.md`
-was only a study aid, and its numbers were re-checked independently (see §4).
+The handwritten appendix requested in Task F is **not included** in this submission. The
+typed derivation in `docs/handwritten_backprop_guide.md` was drafted with AI help, and its
+numbers were re-checked independently (see §4).
 
 ## 2. How the work was split
 
@@ -121,7 +121,6 @@ the packaged `Launch.exe` on a real Windows 11 VM.
 
 - Chose the task interpretation and the overall architecture, and directed the agents.
 - Reviewed the outputs and the reported numbers.
-- Wrote the handwritten backprop derivation (appendix) without AI.
 - Is responsible for being able to explain and modify every function in the interview.
 
 *(Candidate: add your own notes here: which parts you read most carefully, anything you

@@ -192,7 +192,7 @@ ThreadSanitizer during development. Run with `ctest --test-dir build --output-on
 | C | 1-D thermal FEA and verification | Actual effort: `<fill in hours>` |
 | D | Serial vs parallel benchmark | Actual effort: `<fill in hours>` |
 | E | Embedded hardware design and mock adapters | Actual effort: `<fill in hours>` |
-| F | Backpropagation (code and handwritten derivation) | Actual effort: `<fill in hours>` |
+| F | Backpropagation (code and typed derivation) | Actual effort: `<fill in hours>` |
 | - | Testing, Windows verification, documentation, report | Actual effort: `<fill in hours>` |
 | | **Total** | Actual effort: `<fill in hours>` |
 

@@ -119,7 +119,7 @@ Mock adapters (`mcu0`, `fpga0`, `jtag0`): states Disconnected/Connected/Fault, d
 | after one update w, b, v, c | 0.62094645, 0.12094645, 1.07106820, 0.15378828 |
 | J after one update | 0.68577377 |
 
-Loss decreases monotonically over 100 further steps. Handwritten derivation: `docs/appendix_handwritten.pdf`.
+Loss decreases monotonically over 100 further steps. The handwritten appendix is not included; a typed derivation is in `docs/handwritten_backprop_guide.md`.
 
 ![Loss](../results/backprop_loss.svg)
 
