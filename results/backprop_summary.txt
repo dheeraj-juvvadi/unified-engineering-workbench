@@ -1,0 +1,43 @@
+One-neuron backprop: h = tanh(w x + b), yhat = v h + c, J = 0.5 (yhat - y)^2
+Input x = 1, target y = 2, learning rate = 0.1, FD eps = 1e-06
+
+Initial parameters:
+  w = 0.50000000
+  b = 0.00000000
+  v = 1.00000000
+  c = 0.00000000
+
+Forward pass:
+  z = 0.50000000
+  h = 0.46211716
+  yhat = 0.46211716
+  e = yhat - y = -1.53788284
+  J = 1.18254182
+
+Analytic gradients (chain rule):
+  dJ/dw = -1.20946448
+  dJ/db = -1.20946448
+  dJ/dv = -0.71068205
+  dJ/dc = -1.53788284
+
+Finite-difference gradients (central, eps = 1e-6):
+  dJ/dw = -1.20946448
+  dJ/db = -1.20946448
+  dJ/dv = -0.71068205
+  dJ/dc = -1.53788284
+
+Absolute error |analytic - FD|:
+  dw = 1.090e-10
+  db = 1.090e-10
+  dv = 5.254e-11
+  dc = 1.118e-10
+  max = 1.118e-10
+
+After one update (p <- p - lr * grad):
+  w = 0.62094645
+  b = 0.12094645
+  v = 1.07106820
+  c = 0.15378828
+  J1 = 0.68577377
+
+After 100 further updates: J = 0.00000000

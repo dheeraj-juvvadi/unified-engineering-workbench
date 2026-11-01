@@ -1,0 +1,52 @@
+<svg xmlns='http://www.w3.org/2000/svg' width='820' height='520' viewBox='0 0 820 520' font-family='Helvetica, Arial, sans-serif'>
+<rect width='100%' height='100%' fill='#ffffff'/>
+<text x='338.00' y='26' text-anchor='middle' font-size='17' font-weight='bold' fill='#111'>Batch FEA: speedup over the serial loop</text>
+<line x1='78.00' y1='46.00' x2='78.00' y2='458.00' stroke='#e3e3e3'/>
+<line x1='78.00' y1='458.00' x2='78.00' y2='463.00' stroke='#333'/>
+<text x='78.00' y='478.00' text-anchor='middle' font-size='12' fill='#333'>1</text>
+<line x1='164.67' y1='46.00' x2='164.67' y2='458.00' stroke='#e3e3e3'/>
+<line x1='164.67' y1='458.00' x2='164.67' y2='463.00' stroke='#333'/>
+<text x='164.67' y='478.00' text-anchor='middle' font-size='12' fill='#333'>1.5</text>
+<line x1='251.33' y1='46.00' x2='251.33' y2='458.00' stroke='#e3e3e3'/>
+<line x1='251.33' y1='458.00' x2='251.33' y2='463.00' stroke='#333'/>
+<text x='251.33' y='478.00' text-anchor='middle' font-size='12' fill='#333'>2</text>
+<line x1='338.00' y1='46.00' x2='338.00' y2='458.00' stroke='#e3e3e3'/>
+<line x1='338.00' y1='458.00' x2='338.00' y2='463.00' stroke='#333'/>
+<text x='338.00' y='478.00' text-anchor='middle' font-size='12' fill='#333'>2.5</text>
+<line x1='424.67' y1='46.00' x2='424.67' y2='458.00' stroke='#e3e3e3'/>
+<line x1='424.67' y1='458.00' x2='424.67' y2='463.00' stroke='#333'/>
+<text x='424.67' y='478.00' text-anchor='middle' font-size='12' fill='#333'>3</text>
+<line x1='511.33' y1='46.00' x2='511.33' y2='458.00' stroke='#e3e3e3'/>
+<line x1='511.33' y1='458.00' x2='511.33' y2='463.00' stroke='#333'/>
+<text x='511.33' y='478.00' text-anchor='middle' font-size='12' fill='#333'>3.5</text>
+<line x1='598.00' y1='46.00' x2='598.00' y2='458.00' stroke='#e3e3e3'/>
+<line x1='598.00' y1='458.00' x2='598.00' y2='463.00' stroke='#333'/>
+<text x='598.00' y='478.00' text-anchor='middle' font-size='12' fill='#333'>4</text>
+<line x1='78.00' y1='458.00' x2='598.00' y2='458.00' stroke='#e3e3e3'/>
+<line x1='73.00' y1='458.00' x2='78.00' y2='458.00' stroke='#333'/>
+<text x='69.00' y='462.00' text-anchor='end' font-size='12' fill='#333'>0</text>
+<line x1='78.00' y1='355.00' x2='598.00' y2='355.00' stroke='#e3e3e3'/>
+<line x1='73.00' y1='355.00' x2='78.00' y2='355.00' stroke='#333'/>
+<text x='69.00' y='359.00' text-anchor='end' font-size='12' fill='#333'>1</text>
+<line x1='78.00' y1='252.00' x2='598.00' y2='252.00' stroke='#e3e3e3'/>
+<line x1='73.00' y1='252.00' x2='78.00' y2='252.00' stroke='#333'/>
+<text x='69.00' y='256.00' text-anchor='end' font-size='12' fill='#333'>2</text>
+<line x1='78.00' y1='149.00' x2='598.00' y2='149.00' stroke='#e3e3e3'/>
+<line x1='73.00' y1='149.00' x2='78.00' y2='149.00' stroke='#333'/>
+<text x='69.00' y='153.00' text-anchor='end' font-size='12' fill='#333'>3</text>
+<line x1='78.00' y1='46.00' x2='598.00' y2='46.00' stroke='#e3e3e3'/>
+<line x1='73.00' y1='46.00' x2='78.00' y2='46.00' stroke='#333'/>
+<text x='69.00' y='50.00' text-anchor='end' font-size='12' fill='#333'>4</text>
+<rect x='78.00' y='46.00' width='520.00' height='412.00' fill='none' stroke='#333'/>
+<text x='338.00' y='504.00' text-anchor='middle' font-size='14' fill='#111'>Worker threads p [-]</text>
+<text transform='translate(18,252.00) rotate(-90)' text-anchor='middle' font-size='14' fill='#111'>Speedup T_serial / T_p [-]</text>
+<clipPath id='clip'><rect x='78.00' y='46.00' width='520.00' height='412.00'/></clipPath>
+<g clip-path='url(#clip)'>
+<polyline fill='none' stroke='#777777' stroke-width='2' stroke-dasharray='7 5' points='78.00,355.00 251.33,252.00 598.00,46.00 '/>
+
+<polyline fill='none' stroke='#0072B2' stroke-width='2' points='78.00,358.11 251.33,256.95 598.00,87.26 '/>
+<circle cx='78.00' cy='358.11' r='4' fill='#0072B2'/><circle cx='251.33' cy='256.95' r='4' fill='#0072B2'/><circle cx='598.00' cy='87.26' r='4' fill='#0072B2'/>
+</g>
+<line x1='612.00' y1='58.00' x2='638.00' y2='58.00' stroke='#777777' stroke-width='2' stroke-dasharray='7 5'/><text x='645.00' y='62.00' font-size='12' fill='#111'>ideal (speedup = p)</text>
+<line x1='612.00' y1='78.00' x2='638.00' y2='78.00' stroke='#0072B2' stroke-width='2'/><circle cx='625.00' cy='78.00' r='4' fill='#0072B2'/><text x='645.00' y='82.00' font-size='12' fill='#111'>measured (median of 5)</text>
+</svg>

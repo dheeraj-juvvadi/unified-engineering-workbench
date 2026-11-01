@@ -1,0 +1,33 @@
+# Allocator experiment (same machine, same binary build-lead/bench_report, run right after results/bench_summary.txt)
+# env: MALLOC_TRIM_THRESHOLD_=2000000000 MALLOC_TOP_PAD_=500000000 MALLOC_ARENA_MAX=8
+# Purpose: check whether the >100% efficiency is an allocator/page-fault artefact.
+
+Serial vs parallel batch FEA benchmark
+
+System
+  OS:              Linux 6.18.44-fc-v185
+  CPU:             Intel(R) Xeon(R) Processor @ 2.10GHz
+  logical CPUs:    4
+  physical cores:  4
+  RAM:             15.7 GiB
+  compiler:        GCC 13.3.0
+  build type:      Release
+  build flags:     -O3 -DNDEBUG
+
+Configuration
+  cases:           3000
+  elements/case:   5000
+  seed:            42
+  repetitions:     5 (timed), 1 warm-up (untimed)
+  workers:         1,2,4 (capped at logical CPUs)
+
+Results (median of 5 runs; only the solve loop is timed, no I/O)
+  serial loop:     0.1948 s
+  workers   median [s]   speedup   efficiency
+        1       0.2030      0.96        95.9%
+        2       0.1035      1.88        94.1%
+        4       0.0481      4.05       101.2%
+
+Correctness
+  max |T_serial - T_parallel| over all cases, nodes and runs: 0.000e+00 degC
+  verified (<= 1e-8): yes

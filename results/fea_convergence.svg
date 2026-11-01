@@ -1,0 +1,52 @@
+<svg xmlns='http://www.w3.org/2000/svg' width='820' height='520' viewBox='0 0 820 520' font-family='Helvetica, Arial, sans-serif'>
+<rect width='100%' height='100%' fill='#ffffff'/>
+<text x='291.00' y='26' text-anchor='middle' font-size='17' font-weight='bold' fill='#111'>Convergence of the midpoint error</text>
+<line x1='78.00' y1='46.00' x2='78.00' y2='458.00' stroke='#e3e3e3'/>
+<line x1='78.00' y1='458.00' x2='78.00' y2='463.00' stroke='#333'/>
+<text x='78.00' y='478.00' text-anchor='middle' font-size='12' fill='#333'>0.01</text>
+<line x1='206.24' y1='46.00' x2='206.24' y2='458.00' stroke='#e3e3e3'/>
+<line x1='206.24' y1='458.00' x2='206.24' y2='463.00' stroke='#333'/>
+<text x='206.24' y='478.00' text-anchor='middle' font-size='12' fill='#333'>0.02</text>
+<line x1='375.76' y1='46.00' x2='375.76' y2='458.00' stroke='#e3e3e3'/>
+<line x1='375.76' y1='458.00' x2='375.76' y2='463.00' stroke='#333'/>
+<text x='375.76' y='478.00' text-anchor='middle' font-size='12' fill='#333'>0.05</text>
+<line x1='504.00' y1='46.00' x2='504.00' y2='458.00' stroke='#e3e3e3'/>
+<line x1='504.00' y1='458.00' x2='504.00' y2='463.00' stroke='#333'/>
+<text x='504.00' y='478.00' text-anchor='middle' font-size='12' fill='#333'>0.1</text>
+<line x1='78.00' y1='458.00' x2='504.00' y2='458.00' stroke='#e3e3e3'/>
+<line x1='73.00' y1='458.00' x2='78.00' y2='458.00' stroke='#333'/>
+<text x='69.00' y='462.00' text-anchor='end' font-size='12' fill='#333'>0.01</text>
+<line x1='78.00' y1='404.10' x2='504.00' y2='404.10' stroke='#e3e3e3'/>
+<line x1='73.00' y1='404.10' x2='78.00' y2='404.10' stroke='#333'/>
+<text x='69.00' y='408.10' text-anchor='end' font-size='12' fill='#333'>0.02</text>
+<line x1='78.00' y1='332.85' x2='504.00' y2='332.85' stroke='#e3e3e3'/>
+<line x1='73.00' y1='332.85' x2='78.00' y2='332.85' stroke='#333'/>
+<text x='69.00' y='336.85' text-anchor='end' font-size='12' fill='#333'>0.05</text>
+<line x1='78.00' y1='278.95' x2='504.00' y2='278.95' stroke='#e3e3e3'/>
+<line x1='73.00' y1='278.95' x2='78.00' y2='278.95' stroke='#333'/>
+<text x='69.00' y='282.95' text-anchor='end' font-size='12' fill='#333'>0.1</text>
+<line x1='78.00' y1='225.05' x2='504.00' y2='225.05' stroke='#e3e3e3'/>
+<line x1='73.00' y1='225.05' x2='78.00' y2='225.05' stroke='#333'/>
+<text x='69.00' y='229.05' text-anchor='end' font-size='12' fill='#333'>0.2</text>
+<line x1='78.00' y1='153.80' x2='504.00' y2='153.80' stroke='#e3e3e3'/>
+<line x1='73.00' y1='153.80' x2='78.00' y2='153.80' stroke='#333'/>
+<text x='69.00' y='157.80' text-anchor='end' font-size='12' fill='#333'>0.5</text>
+<line x1='78.00' y1='99.90' x2='504.00' y2='99.90' stroke='#e3e3e3'/>
+<line x1='73.00' y1='99.90' x2='78.00' y2='99.90' stroke='#333'/>
+<text x='69.00' y='103.90' text-anchor='end' font-size='12' fill='#333'>1</text>
+<line x1='78.00' y1='46.00' x2='504.00' y2='46.00' stroke='#e3e3e3'/>
+<line x1='73.00' y1='46.00' x2='78.00' y2='46.00' stroke='#333'/>
+<text x='69.00' y='50.00' text-anchor='end' font-size='12' fill='#333'>2</text>
+<rect x='78.00' y='46.00' width='426.00' height='412.00' fill='none' stroke='#333'/>
+<text x='291.00' y='504.00' text-anchor='middle' font-size='14' fill='#111'>Element length h [m]</text>
+<text transform='translate(18,252.00) rotate(-90)' text-anchor='middle' font-size='14' fill='#111'>Max midpoint error [degC]</text>
+<clipPath id='clip'><rect x='78.00' y='46.00' width='426.00' height='412.00'/></clipPath>
+<g clip-path='url(#clip)'>
+<polyline fill='none' stroke='#0072B2' stroke-width='2' points='504.00,82.55 375.76,190.35 247.52,298.15 119.28,405.94 '/>
+<circle cx='504.00' cy='82.55' r='4' fill='#0072B2'/><circle cx='375.76' cy='190.35' r='4' fill='#0072B2'/><circle cx='247.52' cy='298.15' r='4' fill='#0072B2'/><circle cx='119.28' cy='405.94' r='4' fill='#0072B2'/>
+<polyline fill='none' stroke='#D55E00' stroke-width='2' stroke-dasharray='7 5' points='504.00,82.55 375.76,190.35 247.52,298.15 119.28,405.94 '/>
+
+</g>
+<line x1='518.00' y1='58.00' x2='544.00' y2='58.00' stroke='#0072B2' stroke-width='2'/><circle cx='531.00' cy='58.00' r='4' fill='#0072B2'/><text x='551.00' y='62.00' font-size='12' fill='#111'>FE max midpoint error (slope = 2.000)</text>
+<line x1='518.00' y1='78.00' x2='544.00' y2='78.00' stroke='#D55E00' stroke-width='2' stroke-dasharray='7 5'/><text x='551.00' y='82.00' font-size='12' fill='#111'>reference slope 2</text>
+</svg>
