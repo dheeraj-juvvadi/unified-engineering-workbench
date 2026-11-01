@@ -140,8 +140,8 @@ cmake -S . -B build-win -DCMAKE_TOOLCHAIN_FILE=cmake/mingw-toolchain.cmake -DCMA
 cmake --build build-win --target Launch
 ```
 
-`CANDIDATE_ID=<CandidateID> scripts/package.sh` does this, strips the binary and assembles
-`dist/<CandidateID>_Workbench/{Launch.exe, web/, data/}`. The final ZIP (adding src/, docs/ and so on) is put
+`CANDIDATE_ID=RA2311031010070 scripts/package.sh` does this, strips the binary and assembles
+`dist/RA2311031010070_Workbench/{Launch.exe, web/, data/}`. The final ZIP (adding src/, docs/ and so on) is put
 together from that folder and the repository.
 
 ## Regenerating the results
@@ -187,14 +187,14 @@ ThreadSanitizer during development. Run with `ctest --test-dir build --output-on
 
 | Part | Task | Actual effort |
 |---|---|---|
-| A | Architecture, launcher, one-click packaging | Actual effort: `<fill in hours>` |
-| B | STL / ANSYS-CSV viewer and parsers | Actual effort: `<fill in hours>` |
-| C | 1-D thermal FEA and verification | Actual effort: `<fill in hours>` |
-| D | Serial vs parallel benchmark | Actual effort: `<fill in hours>` |
-| E | Embedded hardware design and mock adapters | Actual effort: `<fill in hours>` |
-| F | Backpropagation (code and typed derivation) | Actual effort: `<fill in hours>` |
-| - | Testing, Windows verification, documentation, report | Actual effort: `<fill in hours>` |
-| | **Total** | Actual effort: `<fill in hours>` |
+| A | Architecture, launcher, one-click packaging | Built by AI agents, reviewed by me (counted in the total) |
+| B | STL / ANSYS-CSV viewer and parsers | Built by AI agents, reviewed by me (counted in the total) |
+| C | 1-D thermal FEA and verification | Built by AI agents, reviewed by me (counted in the total) |
+| D | Serial vs parallel benchmark | Built by AI agents, reviewed by me (counted in the total) |
+| E | Embedded hardware design and mock adapters | Built by AI agents, reviewed by me (counted in the total) |
+| F | Backpropagation (code and typed derivation) | Built by AI agents, reviewed by me (counted in the total) |
+| - | Testing, Windows verification, documentation, report | Built by AI agents, reviewed by me (counted in the total) |
+| | **Total** | About 2 h of my own time on 2 Nov 2026: directing the agents, reviewing results, providing the Azure student subscription for the Windows test VM, and submission. Agent run time is not counted as my effort. |
 
 ## AI use and ownership
 

@@ -30,6 +30,25 @@ the packaged `Launch.exe` on a real Windows 11 VM.
 
 ## 3. Representative prompts (abridged)
 
+**My prompts to the AI (verbatim or lightly trimmed):**
+
+- To start the work, with the brief attached: "use sonnet subagents and complete this for me".
+- After an effort estimate: "wait does this require an eta of multiple hours of agentic work or
+  20-30mins" (the answer, 2–3 hours, made me decide to continue with the full scope).
+- To move the work to another session with more credits: "create a single handoff md file of
+  everything ill hand it off to another agent".
+- To get a real Windows test machine: "should the vps on azure work?" and "see if my student
+  offer one enables it and also see how much usage i have left" (this led to the Windows 11 VM
+  run on my Azure for Students subscription).
+- On quality: I pointed out that the first Windows screenshots looked low quality; they were
+  re-taken at 1920×1080 (item 8 in §5).
+- On scope: "why the handwritten scan tho?", then the decision to drop the handwritten appendix
+  after the AI explained it was worth 4 of 7 backprop points.
+- On delivery: the form accepts one PDF up to 1 MB, so I asked for the ZIP to be linked from the
+  PDF instead.
+
+**Prompts given by the lead agent to its subagents (abridged):**
+
 - *Numerics agent:* "Implement fea1d.cpp per fea1d.h. Assemble from element matrices
   (kA/h)[[1,-1],[-1,1]] and loads qAh/2·[1,1], impose Dirichlet BCs by elimination,
   Thomas algorithm. Tests must include max midpoint error = qh²/(8k): N=10 → 1.25,
@@ -123,5 +142,10 @@ the packaged `Launch.exe` on a real Windows 11 VM.
 - Reviewed the outputs and the reported numbers.
 - Is responsible for being able to explain and modify every function in the interview.
 
-*(Candidate: add your own notes here: which parts you read most carefully, anything you
-changed by hand, and your actual hours. Do not overstate.)*
+**My notes.** I did not write the C++ code by hand. My part was choosing the approach,
+directing the agents, deciding scope (full build; handwritten appendix dropped), arranging the
+Windows test on my Azure student credit, checking the reported results against the brief, and
+pushing back where output was not good enough (the screenshots). Before the interview I will
+study `src/core/fea1d.cpp`, `src/core/batch.cpp` and `src/server/job_manager.cpp` closely
+enough to explain and change them. Actual effort: about 2 hours of my own time on
+2 November 2026; agent run time is not counted.
