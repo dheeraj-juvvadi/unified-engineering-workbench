@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Unified Engineering Workbench</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- three.js is vendored locally; OrbitControls imports the bare name 'three' -->
+  <script type="importmap">{"imports":{"three":"./vendor/three.module.js"}}</script>
+  <script type="module" src="app.js"></script>
+</head>
+<body>
+  <header class="app-header">
+    <h1>Unified Engineering Workbench</h1>
+    <span id="conn-pill" class="pill pill-off" role="status" aria-live="polite">
+      <span class="dot" aria-hidden="true"></span><span id="conn-text">Connecting…</span>
+    </span>
+    <span class="spacer"></span>
+    <button id="quit-btn" type="button" class="btn btn-quiet" title="Stop the backend program">Quit app</button>
+  </header>
+
+  <nav class="tabs" role="tablist" aria-label="Workbench sections">
+    <button role="tab" id="tab-geometry"    aria-controls="panel-geometry"    aria-selected="true"  tabindex="0">Geometry</button>
+    <button role="tab" id="tab-thermal"     aria-controls="panel-thermal"     aria-selected="false" tabindex="-1">Thermal Analysis</button>
+    <button role="tab" id="tab-performance" aria-controls="panel-performance" aria-selected="false" tabindex="-1">Performance</button>
+    <button role="tab" id="tab-hardware"    aria-controls="panel-hardware"    aria-selected="false" tabindex="-1">Hardware</button>
+    <button role="tab" id="tab-backprop"    aria-controls="panel-backprop"    aria-selected="false" tabindex="-1">Backprop</button>
+  </nav>
+
+  <main>
+    <!-- ======================================================== GEOMETRY -->
+    <section id="panel-geometry" role="tabpanel" aria-labelledby="tab-geometry" class="panel geometry-layout">
+      <aside class="side">
+        <div class="card">
+          <h2>Load data</h2>
+          <div class="btn-row">
+            <label class="btn file-btn">Open STL…
+              <input id="stl-file" type="file" accept=".stl,model/stl,application/sla">
+            </label>
+            <label class="btn file-btn">Open results CSV…
+              <input id="csv-file" type="file" accept=".csv,text/csv">
+            </label>
+          </div>
+          <div class="field">
+            <label for="sample-select">Sample file</label>
+            <div class="btn-row">
+              <select id="sample-select" aria-label="Sample file"><option value="">(loading list…)</option></select>
+              <button id="sample-load" type="button" class="btn">Load sample</button>
+            </div>
+          </div>
+          <p class="hint">Files are read in the browser and sent unchanged to the C++ parser (limit 200 MB).
+            Entries under <code>bad/</code> are deliberately broken files for error demos.</p>
+        </div>
+
+        <div class="card">
+          <h2>View</h2>
+          <div class="btn-row">
+            <button id="fit-btn" type="button" class="btn">Fit to view</button>
+            <button id="clear-btn" type="button" class="btn btn-quiet">Clear scene</button>
+          </div>
+          <label class="check"><input id="wire-toggle" type="checkbox"> Wireframe (STL)</label>
+          <label class="check"><input id="show-mesh" type="checkbox" checked> Show STL mesh</label>
+          <label class="check"><input id="show-points" type="checkbox" checked> Show CSV nodes</label>
+          <div class="field">
+            <label for="cmap-select">Colour map</label>
+            <select id="cmap-select"></select>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>Picked node</h2>
+          <dl id="pick-info" class="kv"><dt>Status</dt><dd>Click a node in the point cloud.</dd></dl>
+        </div>
+        <div class="card">
+          <h2>Dataset</h2>
+          <dl id="dataset-info" class="kv"><dt>Status</dt><dd>Nothing loaded.</dd></dl>
+          <p id="geo-error" class="inline-error" hidden></p>
+        </div>
+
+      </aside>
+
+      <div class="viewer-wrap">
+        <div id="viewer" class="viewer" tabindex="0"></div>
+        <div id="legend" class="legend" hidden aria-label="Temperature colour legend">
+          <div class="legend-title">T [°C]</div>
+          <div class="legend-body">
+            <div id="legend-bar" class="legend-bar"></div>
+            <div class="legend-ticks"><span id="leg-max"></span><span id="leg-mid"></span><span id="leg-min"></span></div>
+          </div>
+        </div>
+        <div class="viewer-help">Left-drag: rotate &nbsp; Right-drag: pan &nbsp; Wheel: zoom &nbsp; Click: inspect node &nbsp; Axes: X red, Y green, Z blue</div>
+      </div>
+    </section>
+
+    <!-- ========================================================= THERMAL -->
+    <section id="panel-thermal" role="tabpanel" aria-labelledby="tab-thermal" class="panel" hidden>
+      <div class="split">
+        <aside class="side">
+          <form id="fea-form" class="card" novalidate>
+            <h2>1-D rod: -d/dx(k A dT/dx) = q A</h2>
+            <div class="form-grid" id="fea-fields"></div>
+            <div class="btn-row">
+              <button id="fea-solve" type="submit" class="btn btn-primary">Solve</button>
+              <button id="fea-conv" type="button" class="btn">Run convergence (10,20,40,80)</button>
+            </div>
+            <div class="btn-row">
+              <button id="fea-export" type="button" class="btn btn-quiet">Export solution CSV</button>
+              <button id="fea-conv-export" type="button" class="btn btn-quiet">Export convergence CSV</button>
+            </div>
+            <p class="hint">Exact solution: T(x) = T0 + (TL − T0) x/L + q/(2k) · x (L − x).</p>
+          </form>
+        </aside>
+        <div class="content">
+          <div class="card">
+            <h2>Temperature along the rod</h2>
+            <div id="fea-plot" class="plot-box"><p class="muted">Press Solve to compute T(x).</p></div>
+            <p id="fea-note" class="hint"></p>
+          </div>
+          <div class="card">
+            <h2>Error vs exact solution</h2>
+            <table id="fea-errors" class="data"><tbody><tr><td class="muted">No solution yet.</td></tr></tbody></table>
+          </div>
+          <div class="card">
+            <h2>Convergence</h2>
+            <div id="conv-plot" class="plot-box"><p class="muted">Press “Run convergence” to see the error drop with element size h.</p></div>
+            <table id="conv-table" class="data" hidden></table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================== PERFORMANCE -->
+    <section id="panel-performance" role="tabpanel" aria-labelledby="tab-performance" class="panel" hidden>
+      <div class="split">
+        <aside class="side">
+          <form id="bench-form" class="card" novalidate>
+            <h2>Benchmark setup</h2>
+            <div class="form-grid" id="bench-fields"></div>
+            <fieldset class="workers">
+              <legend>Worker threads</legend>
+              <label class="check"><input type="checkbox" name="w" value="1" checked> 1</label>
+              <label class="check"><input type="checkbox" name="w" value="2" checked> 2</label>
+              <label class="check"><input type="checkbox" name="w" value="4" checked> 4</label>
+              <div class="field inline">
+                <label for="bench-custom">Custom</label>
+                <input id="bench-custom" type="text" inputmode="numeric" placeholder="e.g. 8, 16" autocomplete="off">
+              </div>
+              <span class="field-error" id="err-workers" role="alert"></span>
+            </fieldset>
+            <div class="btn-row">
+              <button id="bench-start" type="submit" class="btn btn-primary">Start</button>
+              <button id="bench-cancel" type="button" class="btn" disabled>Cancel</button>
+            </div>
+          </form>
+          <div class="card" id="sysinfo-card">
+            <h2>System</h2>
+            <dl id="sysinfo" class="kv"><dt>Status</dt><dd>Loading…</dd></dl>
+          </div>
+        </aside>
+        <div class="content">
+          <div class="card">
+            <h2>Progress</h2>
+            <div class="progress" role="progressbar" aria-label="Benchmark progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="bench-bar">
+              <div class="progress-fill" id="bench-fill"></div>
+            </div>
+            <p id="bench-msg" class="muted">Idle.</p>
+            <p class="hint">Timing excludes file I/O and rendering — it measures only the compute kernel.
+              Launch-to-ready time of the program is reported separately: <b id="launch-ms">–</b>.</p>
+          </div>
+          <div class="card" id="bench-results" hidden>
+            <div class="card-head">
+              <h2>Results</h2>
+              <span id="verify-badge" class="badge"></span>
+              <span class="spacer"></span>
+              <button id="bench-export" type="button" class="btn btn-quiet">Export CSV</button>
+            </div>
+            <p id="bench-summary" class="hint"></p>
+            <table id="bench-table" class="data"></table>
+            <h3>Speedup</h3>
+            <div id="bench-plot" class="plot-box"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================== HARDWARE -->
+    <section id="panel-hardware" role="tabpanel" aria-labelledby="tab-hardware" class="panel" hidden>
+      <div class="sim-banner" role="note">SIMULATED — no real hardware</div>
+      <div class="btn-row hw-toolbar">
+        <button id="hw-discover" type="button" class="btn btn-primary">Discover</button>
+        <span class="hint">Devices below are software models; no serial, USB or JTAG port is opened.</span>
+      </div>
+      <div id="hw-cards" class="cards-3"><p class="muted">Press Discover to list the simulated devices.</p></div>
+      <div class="card">
+        <div class="card-head"><h2>Event log</h2><span class="spacer"></span>
+          <button id="hw-log-refresh" type="button" class="btn btn-quiet">Refresh</button></div>
+        <pre id="hw-log" class="log" tabindex="0" aria-label="Hardware event log">(empty)</pre>
+      </div>
+    </section>
+
+    <!-- ======================================================== BACKPROP -->
+    <section id="panel-backprop" role="tabpanel" aria-labelledby="tab-backprop" class="panel" hidden>
+      <div class="split">
+        <aside class="side">
+          <form id="bp-form" class="card" novalidate>
+            <h2>One-neuron network</h2>
+            <p class="hint">h = tanh(w x + b), ŷ = v h + c, J = ½ (ŷ − y)². Gradients by hand-derived chain rule, checked against central finite differences.</p>
+            <div class="form-grid" id="bp-fields"></div>
+            <div class="btn-row"><button id="bp-run" type="submit" class="btn btn-primary">Run</button></div>
+          </form>
+        </aside>
+        <div class="content" id="bp-out">
+          <div class="card"><p class="muted">Press Run to compute forward values, gradients and the loss curve.</p></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div id="toasts" class="toasts" aria-live="assertive"></div>
+  <footer class="statusbar" role="status">
+    <span id="status-busy" class="spinner" hidden aria-hidden="true"></span>
+    <span id="status-text">Ready.</span>
+    <span class="spacer"></span>
+    <span id="status-time"></span>
+  </footer>
+
+  <div id="closed-overlay" class="overlay" hidden>
+    <div class="overlay-box">
+      <h2>Workbench stopped</h2>
+      <p>You can close this tab.</p>
+    </div>
+  </div>
+</body>
+</html>
