@@ -1,0 +1,33 @@
+{
+  // One action: "Run packaged Workbench" (also the default build task: Ctrl+Shift+B).
+  // Windows: starts the packaged Launch.exe (found under dist\*_Workbench or next to this folder).
+  // Linux/macOS: builds natively on first use (scripts/build_native.sh), then starts build/Launch.
+  // No extension needed for this task.
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Run packaged Workbench",
+      "type": "shell",
+      "group": { "kind": "build", "isDefault": true },
+      "isBackground": true,
+      "problemMatcher": [],
+      "presentation": { "reveal": "silent", "panel": "shared" },
+      "options": { "cwd": "${workspaceFolder}" },
+      "windows": {
+        "command": "powershell",
+        "args": [
+          "-NoProfile", "-ExecutionPolicy", "Bypass", "-Command",
+          "$e = Get-ChildItem -Path . -Filter Launch.exe -Recurse -Depth 2 -ErrorAction SilentlyContinue | Where-Object { $_.FullName -notlike '*build*' } | Select-Object -First 1; if ($e) { Start-Process -FilePath $e.FullName -WorkingDirectory $e.DirectoryName } else { Write-Error 'Launch.exe not found. Unzip the package, or build it first with scripts/package.sh (needs MinGW on Linux/macOS).' }"
+        ]
+      },
+      "linux": {
+        "command": "bash",
+        "args": ["-c", "[ -x build/Launch ] || scripts/build_native.sh; build/Launch"]
+      },
+      "osx": {
+        "command": "bash",
+        "args": ["-c", "[ -x build/Launch ] || scripts/build_native.sh; build/Launch"]
+      }
+    }
+  ]
+}
