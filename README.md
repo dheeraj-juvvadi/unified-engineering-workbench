@@ -1,6 +1,6 @@
 # Unified Engineering Workbench
 
-PASS Science Works R&D Internship 2026-27, Round 1. Candidate ID: `<RA2311031010070>`
+PASS Science Works R&D Internship 2026-27, Round 1. Candidate ID: `RA2311031010070`
 
 A small desktop tool that puts five engineering tasks behind one window: a 3D viewer for CAD/ANSYS-style
 data, a 1-D finite-element heat solver, a serial-versus-parallel benchmark, a simulated embedded-hardware
