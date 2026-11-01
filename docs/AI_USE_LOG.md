@@ -12,6 +12,7 @@ build sessions and test runs.
 | Claude Code (cloud session) | Claude Opus 5.5 (lead agent) | Project plan, core C++ headers (API contract), CMake files, test framework, `docs/API.md`, integration builds, Windows VM test, benchmark re-runs, this log |
 | Claude Code subagents | Claude Sonnet (5 parallel agents) | (1) FEA / batch / sysinfo / backprop + tests + report tools; (2) STL/CSV parsers, simulated hardware adapters, sample data + tests; (3) HTTP server, job manager, launcher, VS Code config, packaging scripts + tests; (4) frontend (HTML/JS/three.js); (5) embedded design doc + diagram, handwritten-backprop study guide |
 | Claude Code subagent | Claude Sonnet | README and report drafting from verified results |
+| Claude Code (local session on the candidate's Mac) | Claude Opus 5.5 | Initial reading of the brief and work plan; final independent review of the delivered ZIP (clean rebuild, tests, git history, leak scan) and the parser fix in item 9 below |
 
 No AI tool was used to fill in the handwritten appendix: that is written by hand by the
 candidate (`docs/appendix_handwritten.pdf`). The guide in `docs/handwritten_backprop_guide.md`
@@ -104,6 +105,17 @@ the packaged `Launch.exe` on a real Windows 11 VM.
    changed to dismiss it and maximise the browser, then re-run. The second run was
    still at the VM's default 1024×768, so a third run switched the display to
    1920×1080 first (the candidate pointed out that the screenshots looked low quality).
+
+9. **"All 76 tests pass" was not true on every platform.** The delivery report said
+   all tests passed. An independent clean rebuild on macOS (Apple clang, libc++) gave
+   74 passed, 2 failed: `stl_number_errors` and `csv_row_errors`. On that standard
+   library `parse_double` takes its `strtod` fallback, which turns `1e999` into
+   infinity, so the value was reported as "not finite" instead of "out of range".
+   The file was still rejected, but the message was wrong. Fixed in `parse_util.h`:
+   a value that became infinite without a literal `inf`/`nan` token is reported as
+   overflow. After the fix: 76 passed on macOS, and the MinGW build still compiles.
+   The shipped `Launch.exe` was not rebuilt: MinGW uses the `from_chars` path, which
+   the fix does not touch, and the exe stays the one verified on Windows.
 
 ## 6. What the candidate did
 
