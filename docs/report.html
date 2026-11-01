@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Unified Engineering Workbench - Report</title>
+<style>
+  @page { size: A4; margin: 13mm 14mm 14mm 14mm; }
+  * { box-sizing: border-box; }
+  html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  body { font-family: "Segoe UI", "Helvetica Neue", Helvetica, Arial, "DejaVu Sans", sans-serif; font-size: 9.5pt; line-height: 1.32; color: #1b1b1b; margin: 0; }
+  header { border-bottom: 1.5px solid #333; padding-bottom: 3mm; margin-bottom: 3mm; }
+  h1 { font-size: 17pt; margin: 0 0 1mm 0; }
+  .sub { font-size: 10pt; color: #333; margin: 0; }
+  .meta { font-size: 9.6pt; margin: 1.5mm 0 0 0; }
+  .meta span { margin-right: 6mm; }
+  h2 { font-size: 11.6pt; margin: 4.2mm 0 1.2mm 0; padding-bottom: 0.6mm; border-bottom: 1px solid #bbb; break-after: avoid; }
+  h3 { font-size: 9.8pt; margin: 2.4mm 0 0.8mm 0; break-after: avoid; }
+  p { margin: 0 0 1.6mm 0; }
+  ul { margin: 0 0 1.8mm 0; padding-left: 5mm; }
+  li { margin: 0 0 0.6mm 0; }
+  code, pre, .mono { font-family: "Consolas", "DejaVu Sans Mono", "Courier New", monospace; font-size: 8.6pt; }
+  pre { background: #f4f4f4; border: 1px solid #ddd; padding: 1.5mm 2mm; margin: 0 0 2mm 0; white-space: pre; overflow: hidden; }
+  table { border-collapse: collapse; width: 100%; margin: 1mm 0 2.2mm 0; font-size: 8.8pt; break-inside: avoid; }
+  th, td { border: 1px solid #b9b9b9; padding: 0.7mm 1.6mm; text-align: left; vertical-align: top; }
+  th { background: #e9edf2; font-weight: 600; }
+  td.n, th.n { text-align: right; font-variant-numeric: tabular-nums; }
+  caption { caption-side: top; text-align: left; font-weight: 600; font-size: 8.8pt; padding-bottom: 0.6mm; }
+  figure { margin: 0; break-inside: avoid; }
+  figure img { width: 100%; display: block; border: 1px solid #ddd; }
+  figcaption { font-size: 8.2pt; color: #444; margin-top: 0.6mm; }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 4mm; margin: 1mm 0 2.2mm 0; break-inside: avoid; }
+  .row-emb { margin: 1mm 0 1mm 0; }
+  .row-emb figure { width: 104mm; margin: 0 auto 1.5mm auto; }
+  td.nw { white-space: nowrap; }
+  .row-bp { display: grid; grid-template-columns: 1fr 76mm; gap: 4mm; margin: 1mm 0 1mm 0; break-inside: avoid; align-items: start; }
+  .eq { margin: 0.8mm 0 1.6mm 4mm; font-family: "Cambria Math", "DejaVu Serif", "Times New Roman", serif; font-size: 10pt; }
+  .eq i { font-style: italic; }
+  .note { background: #fff8e6; border-left: 3px solid #d9a400; padding: 1.2mm 2.4mm; margin: 0 0 2mm 0; }
+  .small { font-size: 8.4pt; color: #333; }
+  .pagebreak { break-before: page; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Unified Engineering Workbench</h1>
+  <p class="sub">Technical report - PASS Science Works R&amp;D Internship 2026-27, Round 1</p>
+  <p class="meta"><span><b>Candidate ID:</b> &lt;CandidateID&gt;</span><span><b>Source/ZIP link:</b> &lt;Drive link&gt;</span></p>
+</header>
+
+<p>The Workbench is one Windows program, <code>Launch.exe</code>, that combines five engineering tasks in a browser window: a viewer for STL geometry and nodal temperature results (B), a 1-D finite-element heat solver (C), a serial-versus-parallel benchmark (D), a simulated embedded-hardware panel with a written integration design (E), and a one-neuron backpropagation check (F). All calculations are C++17. This report covers design, method, measured results and limitations. Every number comes from the files in <code>results/</code> or from the test runs described in section 7.</p>
+
+<h2>1. Design and architecture</h2>
+<p><b>Layers.</b> The program has three layers with one-way dependencies. <code>src/core</code> is plain C++17 (FEA, batch solver with worker pool, STL and CSV parsers, simulated devices, backprop, system info) and knows nothing about HTTP or JSON. <code>src/server</code> maps HTTP routes to core calls, converts results to JSON (nlohmann/json) and runs long jobs on a background thread. <code>src/app/main.cpp</code> is the launcher. The user interface in <code>web/</code> is plain HTML and JavaScript with three.js r160 vendored, so nothing is downloaded at run time.</p>
+<pre>Browser tab  (web/: HTML, JS, three.js)
+     |   HTTP + JSON on 127.0.0.1, free port
+     v
+src/server   routes, JSON mapping, job manager (progress, cancel)
+     |
+     v
+src/core     fea1d, batch + worker pool, stl_ascii, ansys_csv, embedded_mock, backprop
+             (no HTTP, no JSON; tests/ and tools/ link it directly)
+
+src/app/main.cpp = Launch.exe: picks the port, ShellExecuteW opens the browser,
+                   logs/workbench.log, heartbeat watchdog, Origin/Host check</pre>
+<p><b>Why this shape.</b> A local web UI gives a 3D viewer (WebGL), plots and forms without a GUI toolkit, and still ships as one executable plus static files. Keeping core free of HTTP lets the unit tests and the report tools call the same code the UI uses. The server binds to <code>127.0.0.1</code> only and rejects requests with a foreign <code>Origin</code> or <code>Host</code> header; request bodies with unknown keys get HTTP 400 so a typo cannot be ignored silently.</p>
+<p><b>Long jobs.</b> The benchmark runs on its own thread; the page polls <code>GET /api/jobs/&lt;id&gt;</code> for progress. A result is stored only when the job completes. <b>Cancel</b> ends in state <code>cancelled</code> with <code>result: null</code>, never a partial result. The page sends a heartbeat every 5 s; the program exits after 180 s without one (long because background tabs throttle timers), and not while a benchmark is running.</p>
+<p><b>One-click delivery.</b> <code>Launch.exe</code> is a static C++17 executable (MinGW-w64 GCC 13, posix threads, <code>-O3 -DNDEBUG -static -mwindows</code>), 2.1 MB. It imports only ADVAPI32, KERNEL32, msvcrt, SHELL32, USER32 and WS2_32, so no runtime installer is needed. The user unzips and double-clicks; no administrator rights, no internet. The executable is unsigned, so Windows SmartScreen shows "Windows protected your PC" (More info, then Run anyway); this is described in the README.</p>
+<table>
+<caption>Windows verification (real virtual machine, not Wine)</caption>
+<tr><th style="width:24%">Item</th><th>Result</th></tr>
+<tr><td>Machine</td><td>Azure Standard_B2as_v2, Windows 11 Pro 10.0.26100, AMD EPYC 7763, 2 logical CPUs on 1 physical core, 8 GB RAM, standard non-admin user</td></tr>
+<tr><td>Start</td><td>ZIP extracted into Downloads; <code>Launch.exe</code> started through <code>explorer.exe</code>, which uses the same ShellExecute path as a double-click. Edge opened the app; no console window appeared.</td></tr>
+<tr><td>Timing</td><td>Launch-to-ready 86.5 ms (run 1) and 56.5 ms (run 2); native Linux: about 1 ms</td></tr>
+<tr><td>Exercise</td><td>An unattended script used all five tabs and ran the benchmark to completion; <code>POST /api/shutdown</code> then stopped the process. The procedure was run twice with the same outcome (max serial/parallel difference 0 in both); raw data and procedure: <code>results/windows/README.md</code>. Screenshots: <code>docs/screenshots/windows/</code>.</td></tr>
+</table>
+
+<h2>2. Thermal FEA: formulation and verification (Task C)</h2>
+<p><b>Problem.</b> Steady heat conduction in a uniform rod with a volumetric source, fixed end temperatures:</p>
+<div class="eq">&minus;d/dx ( <i>k A</i> dT/dx ) = <i>q A</i>,&nbsp;&nbsp; 0 &lt; <i>x</i> &lt; <i>L</i>,&nbsp;&nbsp; T(0) = <i>T</i><sub>0</sub>,&nbsp; T(<i>L</i>) = <i>T</i><sub>L</sub></div>
+<p>Default data: <i>L</i> = 1 m, <i>A</i> = 1e-4 m&sup2;, <i>k</i> = 10 W/(m K), <i>q</i> = 1e4 W/m&sup3;, <i>T</i><sub>0</sub> = 100 &deg;C, <i>T</i><sub>L</sub> = 20 &deg;C. The exact solution is <i>T</i>(<i>x</i>) = <i>T</i><sub>0</sub> + (<i>T</i><sub>L</sub> &minus; <i>T</i><sub>0</sub>) <i>x</i>/<i>L</i> + <i>q</i>/(2<i>k</i>) <i>x</i>(<i>L</i> &minus; <i>x</i>) = 100 &minus; 80<i>x</i> + 500<i>x</i>(1 &minus; <i>x</i>), with its maximum of about 188.2 &deg;C at <i>x</i> = 0.42 m.</p>
+<p><b>Method.</b> The weak form is &int; <i>kA</i> T&prime; v&prime; dx = &int; <i>qA</i> v dx for test functions v with v(0) = v(<i>L</i>) = 0. The rod is split into <i>N</i> two-node linear elements of length <i>h</i> = <i>L</i>/<i>N</i>. With shape functions (1 &minus; &xi;) and &xi;, &xi; = (<i>x</i> &minus; <i>x</i><sub>e</sub>)/<i>h</i>, the element matrix and load vector are</p>
+<div class="eq"><b>K</b><sub>e</sub> = (<i>kA</i>/<i>h</i>) [ 1 &minus;1 ; &minus;1 1 ],&nbsp;&nbsp;&nbsp; <b>f</b><sub>e</sub> = (<i>qAh</i>/2) [ 1 ; 1 ]</div>
+<p>Assembly gives a tridiagonal global matrix, stored as three diagonals. The Dirichlet nodes 0 and <i>N</i> are eliminated: their known values move to the right-hand side and the <i>N</i>&minus;1 interior unknowns are solved with the Thomas algorithm (no pivoting needed, since the reduced matrix is symmetric positive definite). Memory and time are O(<i>N</i>).</p>
+<p><b>Verification.</b> Errors are measured against the exact solution at the nodes and at the element midpoints, where the FE value is the average of the two node values (the linear interpolant). For a linear element the interpolation error at the midpoint of a parabola is <i>q h</i>&sup2;/(8<i>k</i>), which is the prediction in the last column.</p>
+<table>
+<caption>Error against the exact solution (results/convergence.csv)</caption>
+<tr><th class="n">N</th><th class="n">h [m]</th><th class="n">max nodal error [&deg;C]</th><th class="n">max midpoint error [&deg;C]</th><th class="n">q h&sup2;/(8k) [&deg;C]</th></tr>
+<tr><td class="n">10</td><td class="n">0.1</td><td class="n">2.8e-14</td><td class="n">1.25</td><td class="n">1.25</td></tr>
+<tr><td class="n">20</td><td class="n">0.05</td><td class="n">2.0e-13</td><td class="n">0.3125</td><td class="n">0.3125</td></tr>
+<tr><td class="n">40</td><td class="n">0.025</td><td class="n">8.8e-13</td><td class="n">0.078125</td><td class="n">0.078125</td></tr>
+<tr><td class="n">80</td><td class="n">0.0125</td><td class="n">1.2e-12</td><td class="n">0.01953125</td><td class="n">0.01953125</td></tr>
+</table>
+<p>The least-squares slope of log(midpoint error) against log(<i>h</i>) is 2.000, so the solution converges at second order in <i>h</i> when judged between the nodes. The nodal error stays at machine precision (1e-14 to 1e-12) for every <i>N</i>: for this one-dimensional problem with constant coefficients the linear-element solution is exact at the nodes.</p>
+<div class="row2">
+  <figure><img src="../results/fea_temperature.svg" alt="FE temperature versus exact solution for N = 10, 20, 40, 80"><figcaption>Fig. 1. T(x): FE solutions for N = 10 to 80 and the exact curve.</figcaption></figure>
+  <figure><img src="../results/fea_convergence.svg" alt="Log-log convergence of the midpoint error with slope 2"><figcaption>Fig. 2. Midpoint error against h, log-log; reference slope 2.</figcaption></figure>
+</div>
+<div class="note"><b>What debugging taught me.</b> My first convergence check used the nodal error only. It was about 1e-13 for every <i>N</i>, which looks like "zero error" and says nothing about the rate. The rate only appears when the solution is evaluated between nodes, so the code and the UI now report the midpoint error as well. Two smaller findings: a test expected <i>T</i>(0.5) = 310 &deg;C, but with <i>q</i>/(2<i>k</i>) = 500 the exact value is 185 &deg;C; the test failed, the solver was right, and I corrected the arithmetic in the test. With <i>q</i> = 0 the solution is a straight line and the nodal error is pure round-off; the least-squares slope then fitted noise and returned &minus;1.46, so the slope routine now ignores points below an error floor relative to the temperature scale.</div>
+
+<h2>3. CAD and ANSYS-style viewer (Task B)</h2>
+<p>The Geometry tab loads an <b>ASCII STL</b> and a <b>nodal temperature CSV</b> (<code>node_id,x_m,y_m,z_m,temperature_C</code>; metres and &deg;C). The browser sends the raw text to a C++ parser, and three.js draws the returned arrays: a mesh with optional wireframe, or a point cloud coloured by temperature with a legend and a selectable colour map. Rotate, pan, zoom and click-to-inspect a node are supported. STL carries no units, so millimetres are assumed and stated in the UI and in <code>docs/FORMATS.md</code>.</p>
+<p><b>Validation.</b> Both parsers are strict: a file is read completely or rejected, and every error names the 1-based line (0 means the whole file) and gives a hint, for example <i>"Line 7: expected 5 columns (node_id,x_m,y_m,z_m,temperature_C), found 4"</i>. Rejected cases include empty or whitespace-only files, binary STL (control bytes, or size exactly 84 + 50n), a wrong keyword order, facets with other than three vertices, missing numbers or text where a number is expected, <code>nan</code>/<code>inf</code>/overflowing values, a solid with no facets, a missing <code>endsolid</code> (truncated file), content after <code>endsolid</code>; for CSV a wrong or misspelled header, header with no data rows, wrong column count, empty or non-numeric cells, negative or non-integer ids, duplicate ids and temperatures below &minus;273.15. Accepted variations are CRLF line endings, a UTF-8 BOM, blank lines, any letter case for STL keywords and numbers like <code>1.5e-3</code> or <code>+3</code>. Numbers are read with <code>std::from_chars</code>, so the result does not depend on the locale.</p>
+<table>
+<caption>Limits and measured parse times (Linux box of section 4, single thread, input already in memory, -O2)</caption>
+<tr><th>Input</th><th class="n">Size</th><th class="n">Parse time</th></tr>
+<tr><td>STL, 200,000 triangles</td><td class="n">47 MB</td><td class="n">130 - 190 ms</td></tr>
+<tr><td>CSV, 500,000 rows</td><td class="n">13.7 MB</td><td class="n">140 - 205 ms</td></tr>
+<tr><td>STL, 800,000 triangles (near the limit)</td><td class="n">189 MB</td><td class="n">about 540 ms</td></tr>
+<tr><td>CSV, 5,000,000 rows (the row limit)</td><td class="n">155 MB</td><td class="n">about 1.8 s</td></tr>
+</table>
+<p>Limits are 200 MB per file, 2,000,000 triangles and 5,000,000 CSV rows; larger inputs are refused before parsing. Four broken files in <code>data/bad/</code> (empty CSV, wrong header, <code>nan</code> value, STL without <code>endsolid</code>) are listed in the sample menu to demonstrate the messages. <b>The sample data are synthetic</b>: <code>cube.stl</code>, <code>heatsink.stl</code> (12 fins, 204 triangles, closed surface checked in a test) and <code>synthetic_plate.csv</code> (882 nodes) are generated by <code>tools/gen_samples.cpp</code>; the CSV only imitates the layout of an ANSYS export and is not the output of an ANSYS run (<code>data/PROVENANCE.md</code>).</p>
+
+<h2>4. Performance: serial against parallel (Task D)</h2>
+<p><b>Workload.</b> A batch of independent 1-D FEA solves, the problem of section 2. Each case has its own conductivity <i>k</i> in [1, 100] and source <i>q</i> in [1e3, 1e5], drawn from <code>std::mt19937_64</code> with seed 42 and an explicit uniform mapping so the batch is the same on every compiler. Default size: 3000 cases of 5000 elements (1.5e7 nodes). <b>Serial</b> is a plain loop over the cases. <b>Parallel</b> is a bounded pool of <i>p</i> <code>std::thread</code> workers that take case indices from an atomic counter; result <i>i</i> is always written to slot <i>i</i>, so the output order does not depend on scheduling.</p>
+<p><b>Method.</b> One untimed warm-up, then 5 timed repetitions; the median is reported. Only the solve loop is timed (no file I/O, JSON or rendering); launch-to-ready is measured separately (section 1). Speedup is S = T<sub>serial</sub>/T<sub>p</sub> and efficiency is S/<i>p</i>. Correctness: after every parallel run the result is compared with the serial one; the largest difference over all cases, nodes and runs is 0 &deg;C (the acceptance limit is 1e-8). Worker counts above the number of logical CPUs are capped by the server and the cap is reported.</p>
+<table>
+<caption>Hardware and build</caption>
+<tr><th style="width:18%"></th><th>Linux container</th><th>Windows 11 VM</th></tr>
+<tr><td>CPU</td><td>Intel Xeon @ 2.10 GHz, 4 logical / 4 physical</td><td>AMD EPYC 7763, 2 logical / 1 physical (SMT siblings)</td></tr>
+<tr><td>RAM</td><td>15.7 GiB</td><td>8 GB</td></tr>
+<tr><td>OS</td><td>Linux 6.18</td><td>Windows 11 Pro 10.0.26100 (Azure Standard_B2as_v2)</td></tr>
+<tr><td>Compiler, flags</td><td>GCC 13.3, <code>-O3 -DNDEBUG</code></td><td>MinGW-w64 GCC 13 (cross-compiled), <code>-O3 -DNDEBUG</code>, static</td></tr>
+</table>
+<div class="row2" style="grid-template-columns: 1fr 78mm;">
+<div>
+<table style="margin-top:0">
+<caption>Median of 5 runs, 3000 cases x 5000 elements, seed 42</caption>
+<tr><th>Machine</th><th>Run</th><th class="n">Time [s]</th><th class="n">Speedup</th><th class="n">Efficiency</th></tr>
+<tr><td rowspan="4">Linux, 4 cores</td><td class="nw">serial</td><td class="n">0.2319</td><td class="n">1.00</td><td class="n">-</td></tr>
+<tr><td class="nw">1 worker</td><td class="n">0.2391</td><td class="n">0.97</td><td class="n">97%</td></tr>
+<tr><td class="nw">2 workers</td><td class="n">0.1188</td><td class="n">1.95</td><td class="n">97.6%</td></tr>
+<tr><td class="nw">4 workers</td><td class="n">0.0644</td><td class="n">3.60</td><td class="n">90%</td></tr>
+<tr><td rowspan="3">Windows VM, 2 vCPU (run 1 / run 2)</td><td class="nw">serial</td><td class="n">0.2488 / 0.2431</td><td class="n">1.00</td><td class="n">-</td></tr>
+<tr><td class="nw">1 worker</td><td class="n">0.2503 / 0.2501</td><td class="n">0.99 / 0.97</td><td class="n">99% / 97%</td></tr>
+<tr><td class="nw">2 workers</td><td class="n">0.1635 / 0.1670</td><td class="n">1.52 / 1.46</td><td class="n">76% / 73%</td></tr>
+</table>
+</div>
+<figure><img src="../results/bench_speedup.svg" alt="Speedup against worker threads, measured and ideal"><figcaption>Fig. 3. Speedup on the Linux machine (data from results/bench.csv).</figcaption></figure>
+</div>
+<p><b>Analysis.</b> One pool worker is 1 to 3 percent slower than the plain loop: that is the cost of the thread and the atomic counter. Two workers on separate cores reach 97.6 percent efficiency. At four workers efficiency falls to 90 percent. The batch is memory-bound: each run writes about 120 MB of results (1.5e7 doubles), and the arithmetic per node is small, so the four cores compete for memory bandwidth. Threads are started again for every run, which is a small fixed cost. On the Windows VM the two vCPUs are hardware-thread siblings of one physical core, so they share execution units and caches; 1.46x to 1.52x (73 to 76 percent, two separate runs, <code>results/windows/README.md</code>) is what two SMT threads of one core typically give and does not point to a defect in the pool. Timing on shared virtual machines is also noisy.</p>
+<div class="note"><b>Noise and an artefact I checked.</b> Repeating the run gave different numbers. One run while compile jobs were using the same CPUs plateaued at 2.37x for 4 workers. Another quiet run gave 4.24x for 4 workers, an efficiency above 100 percent, which a correct measurement of this code should not show. I suspected the serial baseline and tried glibc settings that stop the heap from being trimmed and re-grown between runs (<code>MALLOC_TRIM_THRESHOLD_</code>, <code>MALLOC_TOP_PAD_</code>; <code>results/bench_malloc_experiment.txt</code>). With them the serial time was 0.1948 s and the 4-worker efficiency 101.2 percent, i.e. about linear. I conclude that the excess came from heap trimming and page-fault cost in the serial path, not from a real super-linear speed-up. The table above is the default allocator, as a user would run it, and shows 3.60x. I report it as is rather than the best run.</div>
+<p><b>Limits.</b> Memory bandwidth, per-run thread start-up, SMT sharing on the VM, and noise on shared CPUs. Results from one machine should not be extrapolated to others; the Performance tab reruns the measurement and prints the System card next to the numbers.</p>
+
+<h2>5. Embedded hardware integration design (Task E)</h2>
+<p>This is a <b>design study with simulated devices</b>: no hardware was bought, wired or tested. The full text is <code>docs/EMBEDDED_DESIGN.md</code>. A Windows 11 host connects over USB to one MCU board (USB-CDC virtual COM port), one FPGA board (USB-FTDI bridge) and one JTAG/SWD probe. The MCU (3.3 V) talks to the FPGA (bank B at 1.8 V) over SPI and UART through a level shifter, one channel per signal and direction. The FPGA JTAG pins sit in the 3.3 V bank A, so the debug path needs no level shifting. All grounds meet at one star point. Pin numbers and net names in the document are placeholders to be checked against real schematics.</p>
+<div class="row-emb">
+  <figure><img src="../docs/embedded_block_diagram.svg" alt="Block diagram of host, USB hub, MCU, FPGA, JTAG probe, level shifter and ground star"><figcaption>Fig. 4. Block diagram (docs/embedded_block_diagram.svg).</figcaption></figure>
+  <table>
+  <caption>Selected rows of the interface table</caption>
+  <tr><th>Link</th><th>Voltage, owner, note</th></tr>
+  <tr><td>SPI SCK/MOSI/nCS</td><td>MCU 3.3 V to FPGA 1.8 V via shifter; MCU is master; pull-up on the 1.8 V nCS</td></tr>
+  <tr><td>SPI MISO, UART RX/TX</td><td>FPGA 1.8 V to MCU 3.3 V via shifter; MISO high-Z when nCS is high</td></tr>
+  <tr><td>JTAG TCK/TMS/TDI/TDO</td><td>3.3 V (bank A), no shifter; probe drives, FPGA drives TDO</td></tr>
+  <tr><td>SWDIO / SWCLK</td><td>3.3 V; share pins with TMS / TCK</td></tr>
+  <tr><td>VTref</td><td>Target to probe, sense only; wrong or missing means do not connect</td></tr>
+  <tr><td>Rails</td><td>Each board owns its 3.3 V; boards' rails are never tied together; shifter VCCB from the FPGA 1.8 V rail; OE off until both rails are up</td></tr>
+  <tr><td>USB</td><td>500 mA (USB 2) or 900 mA (USB 3) per port; own port or powered hub per board</td></tr>
+  </table>
+</div>
+<p><b>Ownership and safety.</b> Only one master may drive TCK/TMS at a time: the probe, the FPGA board's FTDI chip and the host app are all candidates, so the app holds a software lock per target (<code>none</code>, <code>probe</code>, <code>ftdi-config</code>). The JTAG probe is a protocol bridge between USB and JTAG/SWD; the microcontroller inside runs only the probe firmware and takes no part in the computations, so it is not a compute board. The document ends with a ten-step bring-up plan (review schematics, inspect, ESD, power one board at a time from a current-limited supply, ground first, check shifter rails, read the IDCODE only, one owner, keep the mock behind the same interface).</p>
+<p><b>Mock adapters.</b> <code>HardwareManager</code> (src/core/embedded_mock) owns three simulated devices, <code>mcu0</code>, <code>fpga0</code> and <code>jtag0</code>, with the states Disconnected, Connected and Fault and a capability report each. Telemetry is deterministic (a nominal value plus pseudo-noise from a stateless generator, simulated clock 0.1 s per call) and labelled SIMULATED in the UI, the API and the log. Recoverable failure: <i>inject timeout</i> arms a fault, the next read returns <code>TIMEOUT</code> (recoverable, device goes to Fault), and <b>Reconnect</b> clears it.</p>
+
+<h2>6. Backpropagation (Task F)</h2>
+<p>One neuron and a linear output, one training example: <i>z</i> = <i>w x</i> + <i>b</i>, <i>h</i> = tanh <i>z</i>, &#375; = <i>v h</i> + <i>c</i>, <i>J</i> = &frac12;(&#375; &minus; <i>y</i>)&sup2;, with <i>x</i> = 1, <i>y</i> = 2, learning rate 0.1 and start values <i>w</i> = 0.5, <i>b</i> = 0, <i>v</i> = 1, <i>c</i> = 0. With <i>e</i> = &#375; &minus; <i>y</i> and <i>h</i>&prime; = 1 &minus; <i>h</i>&sup2; the chain rule gives &part;J/&part;<i>c</i> = <i>e</i>, &part;J/&part;<i>v</i> = <i>e h</i>, &part;J/&part;<i>b</i> = <i>e v</i> (1 &minus; <i>h</i>&sup2;) and &part;J/&part;<i>w</i> = <i>x</i> times that.</p>
+<div class="row-bp">
+<div>
+<table style="margin-top:0">
+<tr><th>Quantity</th><th class="n">Value</th></tr>
+<tr><td>z, h = tanh z, &#375;</td><td class="n">0.5, 0.46211716, 0.46211716</td></tr>
+<tr><td>e = &#375; &minus; y, J</td><td class="n">&minus;1.53788284, 1.18254182</td></tr>
+<tr><td>&part;J/&part;w = &part;J/&part;b</td><td class="n">&minus;1.20946448</td></tr>
+<tr><td>&part;J/&part;v, &part;J/&part;c</td><td class="n">&minus;0.71068205, &minus;1.53788284</td></tr>
+<tr><td>Max |analytic &minus; FD|</td><td class="n">1.1e-10</td></tr>
+<tr><td>After one update w, b, v, c</td><td class="n">0.62094645, 0.12094645, 1.07106820, 0.15378828</td></tr>
+<tr><td>J after one update</td><td class="n">0.68577377</td></tr>
+</table>
+<p>The gradients are checked against central finite differences with &epsilon; = 1e-6; the largest difference is 1.1e-10, which is the expected size for this &epsilon; (truncation of order &epsilon;&sup2; plus round-off of order 1e-16/&epsilon;). The loss decreases monotonically over 100 further updates (to about 1e-20), and the Backprop tab reproduces these numbers. The derivation was also worked by hand: <code>docs/appendix_handwritten.pdf</code> (appendix, not counted in the page limit).</p>
+</div>
+<figure><img src="../results/backprop_loss.svg" alt="Training loss against gradient-descent step"><figcaption>Fig. 5. Loss J against step (results/backprop.csv).</figcaption></figure>
+</div>
+
+<h2>7. Testing</h2>
+<p>The 76 tests are one executable (<code>wb_tests</code>) run by CTest. They use a small header-only macro set (<code>tests/wb_test.h</code>), so no test framework has to be downloaded.</p>
+<table>
+<caption>Tests by area</caption>
+<tr><th>Area</th><th class="n">Tests</th><th>Examples</th></tr>
+<tr><td>FEA</td><td class="n">9</td><td>exact nodal values, midpoint error equal to <i>qh</i>&sup2;/(8<i>k</i>), slope 2, invalid parameters</td></tr>
+<tr><td>Batch and benchmark</td><td class="n">11</td><td>deterministic generator, parallel equals serial, cancel returns nothing, progress is monotone, bad inputs throw</td></tr>
+<tr><td>Backprop</td><td class="n">6</td><td>forward values, gradients against finite differences, one update, monotone loss</td></tr>
+<tr><td>Parsers</td><td class="n">19</td><td>sample files, CRLF/BOM/odd spacing, every rejection class with its line number, 200k-triangle and 500k-row files, size limits</td></tr>
+<tr><td>Embedded mock</td><td class="n">12</td><td>states, unknown device, double connect, timeout and recovery, deterministic telemetry, concurrent access</td></tr>
+<tr><td>Server and job manager</td><td class="n">19</td><td>routes, CSV export, 422 with line number on a bad upload, sample whitelist, busy/cancel/atomic result, shutdown cancels a job</td></tr>
+</table>
+<p><b>Negative tests</b> are a large part of the suite: malformed and oversized files, out-of-range or unknown request fields, a second benchmark while one is running, cancel while running, a hardware timeout followed by reconnect. <b>Sanitizers.</b> During development the suite ran clean under AddressSanitizer with UBSan, and separately under ThreadSanitizer (the worker pool, job manager and hardware manager are the concurrent parts). <b>Windows.</b> The VM run of section 1 exercises the cross-compiled executable end to end, which unit tests on Linux cannot show.</p>
+
+<h2>8. Limitations and next steps</h2>
+<ul>
+<li>The packaged executable is Windows x64 only and unsigned (SmartScreen warning). Code signing would remove the warning.</li>
+<li>STL: ASCII only, one solid per file, millimetres assumed. Binary STL support would be a parser extension. The CSV format is a fixed layout of my own, modelled on an ANSYS nodal export and not validated against a real ANSYS file.</li>
+<li>FEA: 1-D, constant coefficients, Dirichlet ends only. Next: Neumann and convective boundaries, variable <i>k</i>, and a 2-D triangle element, which would make the geometry tab and the solver meet.</li>
+<li>Benchmark: one problem type, and results reflect the machines used; the Windows VM has one physical core. A run on a many-core desktop would show where memory bandwidth becomes the limit. Pinning threads and pre-allocating the result buffers would reduce the noise.</li>
+<li>Hardware: simulation only, and the design has not been tested on a bench. Next step is an adapter interface with the mock as one implementation and a serial-port or OpenOCD back-end behind a feature flag.</li>
+<li>Browser UI: exercised on Windows with Edge through an unattended script; other browsers and manual accessibility testing were not part of the verification.</li>
+</ul>
+
+<h2>9. AI use and ownership</h2>
+<p>AI tools were used during this project; what they were used for, and how I checked the results, is disclosed in <code>docs/AI_USE_LOG.md</code>. The ownership statement is <code>docs/OWNERSHIP.md</code>. Both files are in the ZIP. Third-party code is limited to the vendored MIT-licensed libraries listed in <code>third_party/VERSIONS.md</code> (cpp-httplib, nlohmann/json, three.js). Effort per task is in the README.</p>
+
+</body>
+</html>

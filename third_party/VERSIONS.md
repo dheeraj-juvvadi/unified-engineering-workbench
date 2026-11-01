@@ -13,7 +13,7 @@ packaged app need no network access. Versions are pinned; SHA-256 recorded below
 Licence texts: `third_party/LICENSES/`.
 
 Toolchain used for the release build (not bundled):
-- Windows exe: MinGW-w64 GCC 13 (posix threads), `-O2 -static -mwindows`, cross-compiled on Ubuntu 24.04.
+- Windows exe: MinGW-w64 GCC 13 (posix threads), `-O3 -DNDEBUG -static -mwindows` (CMake Release), cross-compiled on Ubuntu 24.04.
 - Native test build: GCC 13.3 (Ubuntu 24.04), CMake ≥ 3.16.
 
 Runtime dependencies of Launch.exe: only Windows system DLLs (checked with `objdump -p`).
