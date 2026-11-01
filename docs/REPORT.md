@@ -3,7 +3,8 @@
 PASS Science Works R&D Internship 2026-27, Round 1
 
 **Candidate ID:** `<CandidateID>`
-**Source/ZIP link:** `<Drive link>`
+**Submission ZIP:** <https://github.com/dheeraj-juvvadi/unified-engineering-workbench/releases/download/v1.0/RA2311031010070_Workbench.zip>  
+**Source code:** <https://github.com/dheeraj-juvvadi/unified-engineering-workbench>
 
 The printable version of this report is `REPORT.pdf` (generated from `report.html`, 6 pages). This Markdown file
 holds the same sections in shorter form; figures are linked, not embedded.
