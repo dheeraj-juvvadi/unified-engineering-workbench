@@ -1,0 +1,77 @@
+{
+    "error":  null,
+    "id":  "j2",
+    "kind":  "bench",
+    "message":  "100% done",
+    "progress":  1.0,
+    "result":  {
+                   "capped_workers":  [
+                                          1,
+                                          2
+                                      ],
+                   "config":  {
+                                  "cases":  3000,
+                                  "mesh":  5000,
+                                  "reps":  5,
+                                  "seed":  42,
+                                  "warmup":  1,
+                                  "workers":  [
+                                                  1,
+                                                  2
+                                              ]
+                              },
+                   "max_abs_diff":  0.0,
+                   "requested_workers":  [
+                                             1,
+                                             2
+                                         ],
+                   "rows":  [
+                                {
+                                    "efficiency":  0.993829532752693,
+                                    "median_s":  0.2503214,
+                                    "speedup":  0.993829532752693,
+                                    "times_s":  [
+                                                    0.2503214,
+                                                    0.3090907,
+                                                    0.2493341,
+                                                    0.2478077,
+                                                    0.250715
+                                                ],
+                                    "workers":  1
+                                },
+                                {
+                                    "efficiency":  0.7607909048873753,
+                                    "median_s":  0.1634988,
+                                    "speedup":  1.5215818097747507,
+                                    "times_s":  [
+                                                    0.1634988,
+                                                    0.1812779,
+                                                    0.1616525,
+                                                    0.1613739,
+                                                    0.2220597
+                                                ],
+                                    "workers":  2
+                                }
+                            ],
+                   "serial_median_s":  0.2487768,
+                   "serial_times_s":  [
+                                          0.2493453,
+                                          0.2487768,
+                                          0.2482482,
+                                          0.2691517,
+                                          0.248558
+                                      ],
+                   "sysinfo":  {
+                                   "build_flags":  "-O3 -DNDEBUG",
+                                   "build_type":  "Release",
+                                   "compiler":  "GCC 13-posix",
+                                   "cpu_model":  "AMD EPYC 7763 64-Core Processor",
+                                   "logical_cpus":  2,
+                                   "os":  "Windows 10.0.26100",
+                                   "physical_cores":  1,
+                                   "ram_gb":  7.994869232177734
+                               },
+                   "verified":  true
+               },
+    "state":  "done"
+}

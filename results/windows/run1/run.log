@@ -1,0 +1,14 @@
+﻿2026-11-01T14:23:45.5724469-08:00 user=wbtester session=1 os=Microsoft Windows 11 Pro 10.0.26100
+2026-11-01T14:24:05.2290362-08:00 screenshot 00_unzipped_folder (1024x768)
+2026-11-01T14:24:05.2310438-08:00 double-click Launch.exe (ShellExecute through explorer.exe)
+2026-11-01T14:24:30.5500939-08:00 Launch.exe running: True pid=8904 consoleWindows=2
+2026-11-01T14:24:30.6617524-08:00 screenshot 01_after_double_click (1024x768)
+2026-11-01T14:24:30.7524408-08:00 app log: %USERPROFILE%\Downloads\CANDIDATE_Workbench\logs\workbench.log :: 2026-11-01 14:24:06  listening on http://127.0.0.1:61269/  launch_to_ready_ms=86.492400
+2026-11-01T14:24:45.8857665-08:00 screenshot 02_geometry (1024x768)
+2026-11-01T14:25:01.0029711-08:00 screenshot 02_thermal (1024x768)
+2026-11-01T14:26:01.1104779-08:00 screenshot 02_performance (1024x768)
+2026-11-01T14:26:16.2166458-08:00 screenshot 02_hardware (1024x768)
+2026-11-01T14:26:31.3275477-08:00 screenshot 02_backprop (1024x768)
+2026-11-01T14:26:39.1097325-08:00 bench state=done
+2026-11-01T14:26:39.1794708-08:00 screenshot 03_final (1024x768)
+2026-11-01T14:26:43.2232361-08:00 after shutdown, Launch running: False
