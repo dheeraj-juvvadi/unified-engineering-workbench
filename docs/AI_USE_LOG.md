@@ -101,7 +101,9 @@ the packaged `Launch.exe` on a real Windows 11 VM.
    it, and the facet winding was reversed.
 8. **Windows screenshots unusable on the first try.** On the first Windows run the
    Start menu (first-logon behaviour) covered every screenshot. The test script was
-   changed to dismiss it and maximise the browser, then re-run.
+   changed to dismiss it and maximise the browser, then re-run. The second run was
+   still at the VM's default 1024×768, so a third run switched the display to
+   1920×1080 first (the candidate pointed out that the screenshots looked low quality).
 
 ## 6. What the candidate did
 

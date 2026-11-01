@@ -18,9 +18,12 @@ Procedure (`run.log`, unattended PowerShell at logon):
 | Run | launch-to-ready | serial median | 1 worker | 2 workers | max diff |
 |---|---|---|---|---|---|
 | run1 (`run1/`) | 86.5 ms | 0.2488 s | 0.2503 s (0.99×) | 0.1635 s (1.52×) | 0 |
-| run2 (this folder) | 56.5 ms | 0.2431 s | 0.2501 s (0.97×) | 0.1670 s (1.46×) | 0 |
+| run2 (`run2/`) | 56.5 ms | 0.2431 s | 0.2501 s (0.97×) | 0.1670 s (1.46×) | 0 |
+| run3 (this folder) | 163.8 ms (cold, first start after reboot) | 0.2499 s | 0.2492 s (1.00×) | 0.1625 s (1.54×) | 0 |
 
 The 2-worker speed-up stays well below 2 because both vCPUs are SMT siblings on one
 physical core. In run1 the Windows Start menu (first logon) covered the screenshots,
-so those were discarded. Run2 dismissed it and maximised the browser. Run2 also shows
-an Edge "Restore pages" prompt after the VM reboot.
+so those were discarded. Run2 dismissed it and maximised the browser. Run2 also shows an Edge
+"Restore pages" prompt after the VM reboot, and it ran at the VM's default 1024×768.
+Run3 set the display to 1920×1080 first (`ChangeDisplaySettings`), with the Edge restore
+prompt disabled by policy. The screenshots in `docs/screenshots/windows/` are from run3.

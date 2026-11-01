@@ -71,7 +71,7 @@ src/app/main.cpp = Launch.exe: picks the port, ShellExecuteW opens the browser,
 <tr><th style="width:24%">Item</th><th>Result</th></tr>
 <tr><td>Machine</td><td>Azure Standard_B2as_v2, Windows 11 Pro 10.0.26100, AMD EPYC 7763, 2 logical CPUs on 1 physical core, 8 GB RAM, standard non-admin user</td></tr>
 <tr><td>Start</td><td>ZIP extracted into Downloads; <code>Launch.exe</code> started through <code>explorer.exe</code>, which uses the same ShellExecute path as a double-click. Edge opened the app; no console window appeared.</td></tr>
-<tr><td>Timing</td><td>Launch-to-ready 86.5 ms (run 1) and 56.5 ms (run 2); native Linux: about 1 ms</td></tr>
+<tr><td>Timing</td><td>Launch-to-ready 86.5, 56.5 and 163.8 ms in three runs (the last one cold, right after a reboot); native Linux: about 1 ms</td></tr>
 <tr><td>Exercise</td><td>An unattended script used all five tabs and ran the benchmark to completion; <code>POST /api/shutdown</code> then stopped the process. The procedure was run twice with the same outcome (max serial/parallel difference 0 in both); raw data and procedure: <code>results/windows/README.md</code>. Screenshots: <code>docs/screenshots/windows/</code>.</td></tr>
 </table>
 

@@ -23,7 +23,7 @@ holds the same sections in shorter form; figures are linked, not embedded.
 - **Windows verification (real VM, not Wine).** Azure Standard_B2as_v2, Windows 11 Pro 10.0.26100, AMD EPYC 7763
   (2 logical CPUs, 1 physical core), 8 GB, non-admin user. ZIP extracted into Downloads, `Launch.exe` started via
   `explorer.exe` (same ShellExecute path as a double-click). Edge opened the app, no console window, launch-to-ready
-  86.5 ms (run 1) and 56.5 ms (run 2); native Linux about 1 ms. An unattended script used all five tabs and ran the benchmark; `POST
+  86.5, 56.5 and 163.8 ms in three runs (the last one cold, right after a reboot); native Linux about 1 ms. An unattended script used all five tabs and ran the benchmark; `POST
   /api/shutdown` stopped the process. The procedure was run twice (max serial/parallel difference 0 both times); data in
   `results/windows/README.md`. Screenshots: `docs/screenshots/windows/`.
 
