@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 612" width="900" height="612" font-family="'Segoe UI', Helvetica, Arial, sans-serif">
+  <title>Host-connected workbench block diagram</title>
+  <desc>Host PC with Workbench app, optional powered USB hub, one MCU board (3.3 V), one FPGA board (3.3 V and 1.8 V banks, core rail), one JTAG/SWD adapter, a 3.3 V to 1.8 V level shifter, power domains and a common ground star point. Design only; adapters are simulated in software.</desc>
+  <defs>
+    <marker id="aG" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="userSpaceOnUse" markerWidth="9" markerHeight="9" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#455a64"/></marker>
+    <marker id="aB" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="userSpaceOnUse" markerWidth="9" markerHeight="9" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#1565c0"/></marker>
+    <marker id="aN" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="userSpaceOnUse" markerWidth="9" markerHeight="9" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#2e7d32"/></marker>
+    <marker id="aR" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="userSpaceOnUse" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#c62828"/></marker>
+  </defs>
+
+  <rect width="900" height="612" fill="#ffffff"/>
+
+  <!-- Title block -->
+  <text x="20" y="28" font-size="14" font-weight="700" fill="#1b2a33">Unified Engineering Workbench</text>
+  <text x="20" y="44" font-size="10.5" fill="#37474f">Host-connected bench: 1 MCU, 1 FPGA, 1 JTAG adapter</text>
+  <text x="20" y="58" font-size="10.5" fill="#37474f">Design only. No hardware used.</text>
+  <rect x="690" y="30" width="190" height="28" rx="6" fill="#fff3e0" stroke="#e65100" stroke-width="1.5"/>
+  <text x="785" y="48" font-size="11" font-weight="700" fill="#bf360c" text-anchor="middle">C++ mock adapters: SIMULATED</text>
+
+  <!-- Host PC -->
+  <rect x="320" y="34" width="260" height="76" rx="8" fill="#eceff1" stroke="#37474f" stroke-width="1.5"/>
+  <text x="450" y="53" font-size="13" font-weight="700" fill="#1b2a33" text-anchor="middle">Host PC (Windows 11)</text>
+  <text x="450" y="68" font-size="10" fill="#37474f" text-anchor="middle">Workbench app + HardwareManager</text>
+  <g font-size="8.5" fill="#37474f" text-anchor="middle">
+    <rect x="372" y="86" width="44" height="16" rx="2" fill="#ffffff" stroke="#455a64"/><text x="394" y="97.5">USB</text>
+    <rect x="428" y="86" width="44" height="16" rx="2" fill="#ffffff" stroke="#455a64"/><text x="450" y="97.5">USB</text>
+    <rect x="484" y="86" width="44" height="16" rx="2" fill="#ffffff" stroke="#455a64"/><text x="506" y="97.5">USB</text>
+  </g>
+
+  <!-- USB hub -->
+  <rect x="355" y="136" width="190" height="36" rx="6" fill="#eceff1" stroke="#37474f" stroke-width="1.5"/>
+  <text x="450" y="151" font-size="11" font-weight="700" fill="#1b2a33" text-anchor="middle">USB hub (optional)</text>
+  <text x="450" y="164" font-size="9.5" fill="#37474f" text-anchor="middle">self-powered; direct ports also fine</text>
+
+  <!-- USB links: gray data with red VBUS core -->
+  <g fill="none">
+    <path d="M450 110 V136" stroke="#455a64" stroke-width="4"/>
+    <path d="M450 110 V136" stroke="#c62828" stroke-width="1.2"/>
+    <path d="M355 154 H127 V213" stroke="#455a64" stroke-width="4" marker-end="url(#aG)"/>
+    <path d="M355 154 H127 V213" stroke="#c62828" stroke-width="1.2"/>
+    <path d="M545 154 H772 V213" stroke="#455a64" stroke-width="4" marker-end="url(#aG)"/>
+    <path d="M545 154 H772 V213" stroke="#c62828" stroke-width="1.2"/>
+    <path d="M450 172 V213" stroke="#455a64" stroke-width="4" marker-end="url(#aG)"/>
+    <path d="M450 172 V213" stroke="#c62828" stroke-width="1.2"/>
+  </g>
+  <g font-size="9.5" fill="#263238">
+    <text x="458" y="127">USB 2.0 upstream</text>
+    <text x="241" y="148" text-anchor="middle">USB-CDC (host - MCU)</text>
+    <text x="659" y="148" text-anchor="middle">USB-FTDI (host - FPGA config)</text>
+    <text x="462" y="196">USB (host - probe)</text>
+  </g>
+
+  <!-- MCU board -->
+  <rect x="20" y="215" width="215" height="253" rx="8" fill="#f7f9fb" stroke="#37474f" stroke-width="1.5"/>
+  <text x="30" y="235" font-size="13" font-weight="700" fill="#1b2a33">MCU board</text>
+  <text x="30" y="249" font-size="9.5" fill="#37474f">generic Cortex-M4 class, 3.3 V logic</text>
+  <rect x="30" y="259" width="195" height="18" rx="3" fill="#fde8e8" stroke="#c62828"/>
+  <text x="127" y="271.5" font-size="9.5" fill="#7f1d1d" text-anchor="middle">5 V VBUS in (USB)</text>
+  <rect x="30" y="282" width="195" height="18" rx="3" fill="#e3f0fd" stroke="#1565c0"/>
+  <text x="127" y="294.5" font-size="9.5" fill="#0d3c7a" text-anchor="middle">3.3 V rail (LDO) - MCU + I/O</text>
+  <text x="30" y="326" font-size="9.5" fill="#263238">USB device (CDC)</text>
+  <text x="226" y="326" font-size="9.5" fill="#263238" text-anchor="end">SWD header</text>
+  <text x="30" y="364" font-size="9" font-style="italic" fill="#607d8b">firmware (assumed): telemetry,</text>
+  <text x="30" y="376" font-size="9" font-style="italic" fill="#607d8b">SPI master to FPGA</text>
+  <text x="226" y="414" font-size="9.5" fill="#263238" text-anchor="end">SPI master</text>
+  <text x="226" y="442" font-size="9.5" fill="#263238" text-anchor="end">UART</text>
+
+  <!-- FPGA board -->
+  <rect x="665" y="215" width="215" height="253" rx="8" fill="#f7f9fb" stroke="#37474f" stroke-width="1.5"/>
+  <text x="675" y="235" font-size="13" font-weight="700" fill="#1b2a33">FPGA board</text>
+  <text x="675" y="249" font-size="9.5" fill="#37474f">generic small FPGA</text>
+  <rect x="675" y="259" width="195" height="18" rx="3" fill="#fde8e8" stroke="#c62828"/>
+  <text x="772" y="271.5" font-size="9.5" fill="#7f1d1d" text-anchor="middle">5 V VBUS in (USB)</text>
+  <rect x="675" y="282" width="195" height="18" rx="3" fill="#e3f0fd" stroke="#1565c0"/>
+  <text x="772" y="294.5" font-size="9.5" fill="#0d3c7a" text-anchor="middle">3.3 V VCCIO bank A (JTAG, cfg)</text>
+  <text x="675" y="326" font-size="9.5" fill="#263238">JTAG header</text>
+  <text x="870" y="326" font-size="9.5" fill="#263238" text-anchor="end">USB-FTDI bridge</text>
+  <rect x="675" y="337" width="195" height="18" rx="3" fill="#e6f4e8" stroke="#2e7d32"/>
+  <text x="772" y="349.5" font-size="9.5" fill="#1b5e20" text-anchor="middle">1.8 V VCCIO bank B (SPI, UART)</text>
+  <rect x="675" y="360" width="195" height="18" rx="3" fill="#f1e5f7" stroke="#6a1b9a"/>
+  <text x="772" y="372.5" font-size="9.5" fill="#4a148c" text-anchor="middle">VCCINT core ~1.0-1.2 V</text>
+  <text x="675" y="392" font-size="9" font-style="italic" fill="#607d8b">design (assumed): SPI slave + regs</text>
+  <text x="675" y="414" font-size="9.5" fill="#263238">SPI slave</text>
+  <text x="675" y="442" font-size="9.5" fill="#263238">UART</text>
+
+  <!-- JTAG/SWD adapter -->
+  <rect x="360" y="215" width="180" height="135" rx="8" fill="#f7f9fb" stroke="#37474f" stroke-width="1.5"/>
+  <text x="450" y="235" font-size="12.5" font-weight="700" fill="#1b2a33" text-anchor="middle">JTAG / SWD adapter</text>
+  <text x="450" y="249" font-size="9.5" fill="#37474f" text-anchor="middle">generic probe</text>
+  <rect x="370" y="259" width="160" height="18" rx="3" fill="#fde8e8" stroke="#c62828"/>
+  <text x="450" y="271.5" font-size="9.5" fill="#7f1d1d" text-anchor="middle">5 V VBUS in (USB)</text>
+  <rect x="370" y="282" width="160" height="18" rx="3" fill="#e3f0fd" stroke="#1565c0"/>
+  <text x="450" y="294.5" font-size="9.5" fill="#0d3c7a" text-anchor="middle">VTref sense (reads target V)</text>
+  <text x="450" y="321" font-size="9" fill="#263238" text-anchor="middle">USB to JTAG/SWD protocol bridge</text>
+  <text x="450" y="337" font-size="9" font-weight="700" fill="#b71c1c" text-anchor="middle">debug interface, not a compute board</text>
+
+  <!-- Ownership note -->
+  <rect x="350" y="356" width="200" height="30" rx="5" fill="#fff3e0" stroke="#e65100" stroke-width="1.3" stroke-dasharray="5 3"/>
+  <text x="450" y="369" font-size="10" font-weight="700" fill="#bf360c" text-anchor="middle">One owner at a time</text>
+  <text x="450" y="380.5" font-size="8.5" fill="#6d3000" text-anchor="middle">never two masters on TCK/TMS/SWDIO</text>
+
+  <!-- Probe links (SWD to MCU, JTAG to FPGA), 3.3 V -->
+  <g fill="none" stroke="#1565c0" stroke-width="2">
+    <path d="M235 322 H360" marker-start="url(#aB)" marker-end="url(#aB)"/>
+    <path d="M540 322 H665" marker-start="url(#aB)" marker-end="url(#aB)"/>
+  </g>
+  <g font-size="8.5" fill="#0d3c7a" text-anchor="middle">
+    <text x="297" y="300">SWDIO SWCLK</text>
+    <text x="297" y="311">nRST VTref GND</text>
+    <text x="603" y="293">TCK TMS TDI TDO</text>
+    <text x="603" y="304">nTRST nSRST</text>
+    <text x="603" y="315">VTref GND</text>
+  </g>
+  <g font-size="8.5" fill="#bf360c" text-anchor="middle">
+    <text x="297" y="335">owner: probe</text>
+    <text x="603" y="335">owner: probe</text>
+  </g>
+
+  <!-- Level shifter -->
+  <rect x="360" y="396" width="180" height="62" rx="6" fill="#ffffff" stroke="#37474f" stroke-width="1.5"/>
+  <rect x="360" y="396" width="9" height="62" rx="3" fill="#1565c0"/>
+  <rect x="531" y="396" width="9" height="62" rx="3" fill="#2e7d32"/>
+  <text x="450" y="414" font-size="11" font-weight="700" fill="#1b2a33" text-anchor="middle">Level shifter</text>
+  <text x="450" y="428" font-size="9.5" fill="#37474f" text-anchor="middle">3.3 V (VCCA) to 1.8 V (VCCB)</text>
+  <text x="450" y="441" font-size="9" fill="#37474f" text-anchor="middle">SPI + UART + reset, OE pin</text>
+  <text x="450" y="452" font-size="8.5" fill="#607d8b" text-anchor="middle">MCU side blue / FPGA side green</text>
+
+  <!-- SPI / UART through shifter -->
+  <g fill="none" stroke-width="2">
+    <path d="M235 410 H360" stroke="#1565c0" marker-start="url(#aB)" marker-end="url(#aB)"/>
+    <path d="M235 438 H360" stroke="#1565c0" marker-start="url(#aB)" marker-end="url(#aB)"/>
+    <path d="M540 410 H665" stroke="#2e7d32" marker-start="url(#aN)" marker-end="url(#aN)"/>
+    <path d="M540 438 H665" stroke="#2e7d32" marker-start="url(#aN)" marker-end="url(#aN)"/>
+  </g>
+  <g font-size="8.5" text-anchor="middle">
+    <g fill="#0d3c7a">
+      <text x="297" y="404">SPI: SCK MOSI MISO CS</text>
+      <text x="297" y="432">UART: TX RX</text>
+    </g>
+    <g fill="#1b5e20">
+      <text x="603" y="404">SPI 1.8 V</text>
+      <text x="603" y="432">UART 1.8 V</text>
+    </g>
+  </g>
+
+  <!-- Ground star -->
+  <g fill="none" stroke="#212121" stroke-width="1.5" stroke-dasharray="6 3">
+    <path d="M30 468 V592"/>
+    <path d="M870 468 V592"/>
+    <path d="M380 458 V592"/>
+    <path d="M30 592 H870"/>
+  </g>
+  <circle cx="450" cy="592" r="9" fill="#ffffff" stroke="#212121" stroke-width="1.5"/>
+  <circle cx="450" cy="592" r="4.5" fill="#212121"/>
+  <text x="36" y="480" font-size="8.5" fill="#212121">GND</text>
+  <text x="838" y="480" font-size="8.5" fill="#212121">GND</text>
+  <text x="386" y="474" font-size="8.5" fill="#212121">GND</text>
+  <text x="450" y="609" font-size="9" fill="#212121" text-anchor="middle">common GND star point (USB shield and probe-cable GND join here, no loops)</text>
+
+  <!-- Legend -->
+  <rect x="64" y="486" width="291" height="96" rx="6" fill="#ffffff" stroke="#b0bec5"/>
+  <text x="74" y="500" font-size="10.5" font-weight="700" fill="#1b2a33">Legend</text>
+  <g font-size="9.5" fill="#263238">
+    <path d="M74 510 H109" stroke="#455a64" stroke-width="4"/><path d="M74 510 H109" stroke="#c62828" stroke-width="1.2"/>
+    <text x="117" y="513.5">USB cable (data in gray, 5 V VBUS as red core)</text>
+    <path d="M74 525 H109" stroke="#1565c0" stroke-width="2"/>
+    <text x="117" y="528.5">3.3 V signals (SPI, UART, SWD, JTAG)</text>
+    <path d="M74 540 H109" stroke="#2e7d32" stroke-width="2"/>
+    <text x="117" y="543.5">1.8 V signals (FPGA bank B side)</text>
+    <path d="M74 555 H109" stroke="#212121" stroke-width="1.5" stroke-dasharray="6 3"/>
+    <text x="117" y="558.5">ground return to GND star point</text>
+    <rect x="74" y="565" width="35" height="12" rx="2" fill="#fff3e0" stroke="#e65100" stroke-dasharray="4 2"/>
+    <text x="117" y="574.5">exclusive-ownership interlock note</text>
+  </g>
+
+  <!-- Power domains -->
+  <text x="404" y="493" font-size="10.5" font-weight="700" fill="#1b2a33">Power domains (from USB VBUS or bench supply)</text>
+  <g fill="none" stroke="#c62828" stroke-width="1.2">
+    <path d="M449 513 V503 H803"/>
+    <path d="M567 503 V512" marker-end="url(#aR)"/>
+    <path d="M685 503 V512" marker-end="url(#aR)"/>
+    <path d="M803 503 V512" marker-end="url(#aR)"/>
+  </g>
+  <g font-size="9" text-anchor="middle">
+    <rect x="398" y="513" width="102" height="48" rx="4" fill="#fde8e8" stroke="#c62828"/>
+    <text x="449" y="526" font-size="10" font-weight="700" fill="#7f1d1d">5 V VBUS</text>
+    <text x="449" y="538" fill="#7f1d1d">USB 2: 500 mA max</text>
+    <text x="449" y="550" fill="#7f1d1d">USB 3: 900 mA max</text>
+
+    <rect x="516" y="513" width="102" height="48" rx="4" fill="#e3f0fd" stroke="#1565c0"/>
+    <text x="567" y="526" font-size="10" font-weight="700" fill="#0d3c7a">3.3 V</text>
+    <text x="567" y="538" fill="#0d3c7a">MCU, FPGA bank A,</text>
+    <text x="567" y="550" fill="#0d3c7a">shifter VCCA, VTref</text>
+
+    <rect x="634" y="513" width="102" height="48" rx="4" fill="#e6f4e8" stroke="#2e7d32"/>
+    <text x="685" y="526" font-size="10" font-weight="700" fill="#1b5e20">1.8 V</text>
+    <text x="685" y="538" fill="#1b5e20">FPGA bank B VCCIO</text>
+    <text x="685" y="550" fill="#1b5e20">shifter VCCB</text>
+
+    <rect x="752" y="513" width="102" height="48" rx="4" fill="#f1e5f7" stroke="#6a1b9a"/>
+    <text x="803" y="526" font-size="10" font-weight="700" fill="#4a148c">Core 1.0-1.2 V</text>
+    <text x="803" y="538" fill="#4a148c">FPGA VCCINT</text>
+    <text x="803" y="550" fill="#4a148c">order per datasheet</text>
+  </g>
+  <text x="398" y="575" font-size="8.5" fill="#37474f">Verify each rail with a meter before connecting boards (see integration plan).</text>
+</svg>
