@@ -82,7 +82,13 @@ inline Num parse_double(std::string_view tok, double& out) {
     double v = std::strtod(buf, &endp);
     if (endp != buf + n) return Num::Invalid;
 #endif
-    if (!std::isfinite(v)) return Num::NotFinite;
+    if (!std::isfinite(v)) {
+        // strtod (and some from_chars versions) turn "1e999" into inf instead of reporting
+        // an error. Only a literal "inf"/"nan" token counts as NotFinite; anything else
+        // that became infinite overflowed. Keeps messages identical on every platform.
+        bool literal = tok.find_first_of("iInN") != std::string_view::npos;
+        return (std::isinf(v) && !literal) ? Num::Overflow : Num::NotFinite;
+    }
     out = v;
     return Num::Ok;
 }
